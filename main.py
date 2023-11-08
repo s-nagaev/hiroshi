@@ -1,0 +1,157 @@
+import asyncio
+
+from loguru import logger
+from telegram import (
+    BotCommand,
+    InlineQueryResultArticle,
+    InputTextMessageContent,
+    Update,
+    constants,
+)
+from telegram.ext import (
+    Application,
+    ApplicationBuilder,
+    CallbackQueryHandler,
+    CommandHandler,
+    ContextTypes,
+    InlineQueryHandler,
+    MessageHandler,
+    filters,
+)
+
+from hiroshi.config import telegram_settings
+from hiroshi.services.bot import (
+    handle_available_providers_options,
+    handle_prompt,
+    handle_provider_selection,
+    handle_reset,
+)
+from hiroshi.utils import (
+    GROUP_CHAT_TYPES,
+    check_user_allowance,
+    get_telegram_chat,
+    get_telegram_message,
+    log_application_settings,
+    user_interacts_with_bot,
+)
+
+
+class HiroshiBot:
+    def __init__(self) -> None:
+        self.commands = [
+            BotCommand(command="help", description="Show this help message"),
+            BotCommand(
+                command="ask",
+                description=(
+                    "Ask me any question (in group chat, for example) (e.g. /ask which program language is the best?)"
+                ),
+            ),
+            BotCommand(
+                command="reset", description="Reset your conversation history (will reduce prompt and save some tokens)"
+            ),
+            BotCommand(command="provider", description="Select GPT provider"),
+        ]
+
+    async def help(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        telegram_message = get_telegram_message(update=update)
+        commands = [f"/{command.command} - {command.description}" for command in self.commands]
+        commands_desc = "\n".join(commands)
+        help_text = (
+            f"Hey! My name is {telegram_settings.bot_name}, and I'm your ChatGPT experience provider!\n\n"
+            f"{commands_desc}"
+        )
+        await telegram_message.reply_text(help_text, disable_web_page_preview=True)
+
+    @check_user_allowance
+    async def reset(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        asyncio.create_task(handle_reset(update=update, context=context))
+
+    @check_user_allowance
+    async def prompt(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        telegram_chat = get_telegram_chat(update=update)
+        telegram_message = get_telegram_message(update=update)
+        prompt = telegram_message.text
+
+        if not prompt:
+            return None
+
+        if (
+            telegram_chat.type in GROUP_CHAT_TYPES
+            and telegram_settings.answer_direct_messages_only
+            and "/ask" not in prompt
+            and not user_interacts_with_bot(update=update, context=context)
+        ):
+            return None
+        asyncio.create_task(handle_prompt(update=update, context=context))
+
+    @check_user_allowance
+    async def ask(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        asyncio.create_task(handle_prompt(update=update, context=context))
+
+    @check_user_allowance
+    async def show_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        telegram_message = get_telegram_message(update=update)
+        reply_markup = await handle_available_providers_options()
+
+        await telegram_message.reply_text("Please, select GPT service provider:", reply_markup=reply_markup)
+
+    async def select_provider(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        asyncio.create_task(handle_provider_selection(update=update, context=context))
+
+    @check_user_allowance
+    async def inline_query(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        inline_query = update.inline_query
+        if not inline_query:
+            return
+        query = inline_query.query
+        results = [
+            InlineQueryResultArticle(
+                id=query,
+                title="Ask Hiroshi",
+                input_message_content=InputTextMessageContent(query),
+                description=query,
+                thumbnail_url="https://i.ibb.co/njjQMVQ/hiroshi_logo.png",
+            )
+        ]
+        await inline_query.answer(results)
+
+    async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+        logger.error(f"Error occurred while handling an update: {context.error}")
+
+    async def post_init(self, application: Application) -> None:  # type: ignore
+        await application.bot.set_my_commands(self.commands)
+
+    def run(self) -> None:
+        if telegram_settings.proxy:
+            app = (
+                ApplicationBuilder()
+                .token(telegram_settings.token)
+                .proxy_url(telegram_settings.proxy)
+                .get_updates_proxy_url(telegram_settings.proxy)
+                .post_init(self.post_init)
+                .build()
+            )
+        else:
+            app = ApplicationBuilder().token(telegram_settings.token).post_init(self.post_init).build()
+
+        app.add_handler(CommandHandler("help", self.help))
+        app.add_handler(CommandHandler("reset", self.reset))
+        app.add_handler(CommandHandler("start", self.help))
+        app.add_handler(CommandHandler("ask", self.ask))
+        app.add_handler(CommandHandler("provider", self.show_menu))
+        app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), self.prompt))
+        app.add_handler(CallbackQueryHandler(self.select_provider))
+        app.add_handler(
+            InlineQueryHandler(
+                self.inline_query,
+                chat_types=[constants.ChatType.GROUP, constants.ChatType.SUPERGROUP],
+            )
+        )
+        app.add_error_handler(self.error_handler)
+        app.run_polling()
+
+
+if __name__ == "__main__":
+    log_application_settings()
+    telegram_bot = HiroshiBot()
+    telegram_bot.run()

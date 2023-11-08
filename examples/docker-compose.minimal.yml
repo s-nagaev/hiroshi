@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  hiroshi:
+   restart: unless-stopped
+   image: pysergio/hiroshi:latest
+   environment:
+     TELEGRAM_BOT_TOKEN: 1111111111:SOME_REAL_TOKEN_HERE
+   volumes:
+     - hiroshi_data:/app/data
+
+volumes:
+  hiroshi_data:
