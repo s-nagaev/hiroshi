@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2023-11-24
+
+### Changed
+
+- Gpt4free upgraded to 0.1.8.8
+
 ## [0.1.0] - 2023-11-08
 
 ### Added
@@ -17,5 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Flake8 and Mypy setups.
 - GitHub Action for linters.
 
-[Unreleased]: https://github.com/s-nagaev/hiroshi/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/s-nagaev/hiroshi/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/s-nagaev/hiroshi/tree/v0.1.1
 [0.1.0]: https://github.com/s-nagaev/hiroshi/tree/v0.1.0
