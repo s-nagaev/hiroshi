@@ -1,5 +1,5 @@
 import g4f
-from g4f import BaseProvider
+from g4f.base_provider import BaseProvider
 from g4f.models import Model
 from loguru import logger
 
@@ -10,12 +10,14 @@ MODELS_AND_PROVIDERS: dict[str, tuple[str, str]] = {
     "GPT-3.5 (The best/fastest provider)": ("gpt_35_long", "Default"),
     "GPT-4 (The best/fastest provider)": ("gpt_4", "Default"),
     "Bing (GPT-4)": ("gpt_4", "Bing"),
-    "Phind (GPT-4)": ("gpt_4", "Phind"),
-    "Aichat (GPT-3.5)": ("gpt-3.5-turbo", "Aichat"),
-    "GeekGpt (GPT-3.5)": ("gpt-3.5-turbo", "GeekGpt"),
+    "ChatBase (GPT-3.5)": ("gpt-3.5-turbo", "ChatBase"),
+    "ChatgptAi (GPT-3.5)": ("gpt-3.5-turbo", "ChatgptAi"),
+    "FreeGpt (GPT-3.5)": ("gpt-3.5-turbo", "FreeGpt"),
+    "GptGo (GPT-3.5)": ("gpt-3.5-turbo", "GptGo"),
     "You (GPT-3.5)": ("gpt-3.5-turbo", "You"),
-    "Llama (Llama 2 70B)": ("meta-llama/Llama-2-70b-chat-hf", "Llama2"),
-    "Llama (Llava 13B)": ("Llava", "Llama2"),
+    "Llama (Llama 2 7B)": ("meta/llama-2-7b-chat", "Llama2"),
+    "Llama (Llama 2 13B)": ("meta/llama-2-13b-chat", "Llama2"),
+    "Llama (Llama 2 70B)": ("meta/llama-2-70b-chat", "Llama2"),
 }
 
 

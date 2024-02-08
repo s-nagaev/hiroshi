@@ -1,9 +1,9 @@
 import time
 
-from g4f import BaseProvider, RetryProvider
+from g4f.base_provider import BaseProvider
 from g4f.models import Model, ModelUtils
 from g4f.models import default as default_model
-from g4f.Provider import ProviderUtils
+from g4f.Provider import ProviderUtils, RetryProvider
 from loguru import logger
 from pydantic import BaseModel, Field
 
