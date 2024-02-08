@@ -1,8 +1,6 @@
 name: Build
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
   push:
     tags:
       - "v*.*.*"
@@ -28,7 +26,6 @@ jobs:
             pysergio/hiroshi
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=schedule
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}

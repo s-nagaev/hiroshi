@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 aioredis = "^2.0"
-g4f = "^0.1"
+g4f = "*"
 loguru = "^0.7"
 pydantic = {extras = ["dotenv"], version = "1.10.9"}
 python-telegram-bot = "^20"
