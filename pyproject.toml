@@ -13,6 +13,7 @@ g4f = "*"
 loguru = "^0.7"
 pydantic = {extras = ["dotenv"], version = "1.10.9"}
 python-telegram-bot = "^20"
+brotli = "^1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
