@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2024-02-24
+
+### Changed
+
+- The code has been slightly updated for compatibility with the new version of g4f.
+
+
 ## [0.1.2] - 2024-02-08
 
 ### Added 
@@ -34,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Flake8 and Mypy setups.
 - GitHub Action for linters.
 
-[Unreleased]: https://github.com/s-nagaev/hiroshi/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/s-nagaev/hiroshi/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/s-nagaev/hiroshi/tree/v0.1.3
+[0.1.2]: https://github.com/s-nagaev/hiroshi/tree/v0.1.2
 [0.1.1]: https://github.com/s-nagaev/hiroshi/tree/v0.1.1
 [0.1.0]: https://github.com/s-nagaev/hiroshi/tree/v0.1.0
