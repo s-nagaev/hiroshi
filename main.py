@@ -6,7 +6,6 @@ from telegram import (
     InlineQueryResultArticle,
     InputTextMessageContent,
     Update,
-    constants,
 )
 from telegram.ext import (
     Application,
@@ -14,7 +13,6 @@ from telegram.ext import (
     CallbackQueryHandler,
     CommandHandler,
     ContextTypes,
-    InlineQueryHandler,
     MessageHandler,
     filters,
 )
@@ -28,6 +26,7 @@ from hiroshi.services.bot import (
 )
 from hiroshi.utils import (
     GROUP_CHAT_TYPES,
+    check_user_allow_to_apply_settings,
     check_user_allowance,
     get_telegram_chat,
     get_telegram_message,
@@ -39,7 +38,8 @@ from hiroshi.utils import (
 class HiroshiBot:
     def __init__(self) -> None:
         self.commands = [
-            BotCommand(command="help", description="Show this help message"),
+            BotCommand(command="about", description="About this bot"),
+            BotCommand(command="help", description="Show the help message"),
             BotCommand(
                 command="ask",
                 description=(
@@ -57,12 +57,22 @@ class HiroshiBot:
         commands = [f"/{command.command} - {command.description}" for command in self.commands]
         commands_desc = "\n".join(commands)
         help_text = (
-            f"Hey! My name is {telegram_settings.bot_name}, and I'm your ChatGPT experience provider!\n\n"
+            f"Hey! My name is {telegram_settings.bot_name}, and I'm your FREE GPT experience provider!\n\n"
             f"{commands_desc}"
         )
         await telegram_message.reply_text(help_text, disable_web_page_preview=True)
 
+    async def about(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        telegram_message = get_telegram_message(update=update)
+
+        text = (
+            "If you like me, or you have some questions, feature requests or any issues found, please, "
+            "feel free to visit my GitHub page: https://github.com/s-nagaev/hiroshi. Thank you!\n\n"
+        )
+        await telegram_message.reply_text(text, disable_web_page_preview=True)
+
     @check_user_allowance
+    @check_user_allow_to_apply_settings
     async def reset(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         asyncio.create_task(handle_reset(update=update, context=context))
 
@@ -89,12 +99,14 @@ class HiroshiBot:
         asyncio.create_task(handle_prompt(update=update, context=context))
 
     @check_user_allowance
+    @check_user_allow_to_apply_settings
     async def show_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         telegram_message = get_telegram_message(update=update)
         reply_markup = await handle_available_providers_options()
 
         await telegram_message.reply_text("Please, select GPT service provider:", reply_markup=reply_markup)
 
+    @check_user_allow_to_apply_settings
     async def select_provider(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         asyncio.create_task(handle_provider_selection(update=update, context=context))
 
@@ -106,9 +118,9 @@ class HiroshiBot:
         query = inline_query.query
         results = [
             InlineQueryResultArticle(
-                id=query,
-                title="Ask Hiroshi",
-                input_message_content=InputTextMessageContent(query),
+                id=inline_query.id,
+                title=f"Ask {telegram_settings.bot_name}",
+                input_message_content=InputTextMessageContent(message_text=query),
                 description=query,
                 thumbnail_url="https://i.ibb.co/njjQMVQ/hiroshi_logo.png",
             )
@@ -116,7 +128,7 @@ class HiroshiBot:
         await inline_query.answer(results)
 
     async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
-        logger.error(f"Error occurred while handling an update: {context.error}")
+        logger.error(f"Error occurred while handling an update: {str(context.error)[:240]}")
 
     async def post_init(self, application: Application) -> None:  # type: ignore
         await application.bot.set_my_commands(self.commands)
@@ -134,6 +146,8 @@ class HiroshiBot:
         else:
             app = ApplicationBuilder().token(telegram_settings.token).post_init(self.post_init).build()
 
+        if telegram_settings.show_about:
+            app.add_handler(CommandHandler("about", self.about))
         app.add_handler(CommandHandler("help", self.help))
         app.add_handler(CommandHandler("reset", self.reset))
         app.add_handler(CommandHandler("start", self.help))
@@ -141,12 +155,13 @@ class HiroshiBot:
         app.add_handler(CommandHandler("provider", self.show_menu))
         app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), self.prompt))
         app.add_handler(CallbackQueryHandler(self.select_provider))
-        app.add_handler(
-            InlineQueryHandler(
-                self.inline_query,
-                chat_types=[constants.ChatType.GROUP, constants.ChatType.SUPERGROUP],
-            )
-        )
+        # TODO It doesn't work de-facto. Need to fix it first.
+        # app.add_handler(
+        #     InlineQueryHandler(
+        #         self.inline_query,
+        #         chat_types=[constants.ChatType.GROUP, constants.ChatType.SUPERGROUP],
+        #     )
+        # )
         app.add_error_handler(self.error_handler)
         app.run_polling()
 

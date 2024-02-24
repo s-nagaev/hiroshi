@@ -15,7 +15,7 @@ class Message(BaseModel):
     expire_at: float | None = None
 
 
-class User(BaseModel):
+class Chat(BaseModel):
     id: int
     provider_name: str | None = None
     model_name: str = "gpt_35_long"

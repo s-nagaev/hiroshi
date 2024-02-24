@@ -5,14 +5,14 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, constan
 from telegram.ext import ContextTypes
 
 from hiroshi.config import application_settings, gpt_settings
-from hiroshi.services.gpt import retrieve_available_providers
-from hiroshi.services.user import (
+from hiroshi.services.chat import (
     check_history_and_summarize,
     get_gtp_chat_answer,
     reset_chat_history,
     set_active_provider,
 )
-from hiroshi.storage.abc import Database
+from hiroshi.services.gpt import retrieve_available_providers
+from hiroshi.storage.abstract import Database
 from hiroshi.storage.database import inject_database
 from hiroshi.utils import (
     get_telegram_chat,
@@ -30,10 +30,10 @@ async def handle_provider_selection(update: Update, context: ContextTypes.DEFAUL
     await query.answer()
     provider_selected = query.data
     telegram_user = get_telegram_user(update=update)
-    chat = get_telegram_chat(update=update)
-    await set_active_provider(user_id=telegram_user.id, provider_selected=provider_selected)
+    telegram_chat = get_telegram_chat(update=update)
+    await set_active_provider(chat_id=telegram_chat.id, provider_selected=provider_selected)
     logger.info(
-        f"{telegram_user.name} (Telegram ID: {telegram_user.id}) in the {chat} "
+        f"{telegram_user.name} (Telegram ID: {telegram_user.id}) in the {telegram_chat} "
         f"switched to provider: '{provider_selected}'"
     )
     await query.edit_message_text(text=f"Now you will work with the {query.data} service.")
@@ -46,7 +46,7 @@ async def handle_prompt(db: Database, update: Update, context: ContextTypes.DEFA
     telegram_chat = get_telegram_chat(update=update)
     telegram_message = get_telegram_message(update=update)
     prompt = telegram_message.text
-    hiroshi_user = await db.get_or_create_user(user_id=telegram_user.id)
+    hiroshi_user = await db.get_or_create_chat(chat_id=telegram_chat.id)
 
     if not prompt:
         return None
@@ -61,7 +61,7 @@ async def handle_prompt(db: Database, update: Update, context: ContextTypes.DEFA
         f"{': ' + prompt_to_log if application_settings.log_prompt_data else ''}"
     )
 
-    get_gtp_chat_answer_task = asyncio.ensure_future(get_gtp_chat_answer(user_id=telegram_user.id, prompt=prompt))
+    get_gtp_chat_answer_task = asyncio.ensure_future(get_gtp_chat_answer(chat_id=telegram_chat.id, prompt=prompt))
 
     while not get_gtp_chat_answer_task.done():
         await context.bot.send_chat_action(chat_id=telegram_chat.id, action=constants.ChatAction.TYPING)
@@ -93,7 +93,7 @@ async def handle_prompt(db: Database, update: Update, context: ContextTypes.DEFA
         f"{logged_answer}"
     )
     await send_gpt_answer_message(gpt_answer=gpt_answer, update=update, context=context)
-    history_is_summarized = await check_history_and_summarize(user_id=telegram_user.id)
+    history_is_summarized = await check_history_and_summarize(chat_id=telegram_chat.id)
     if history_is_summarized:
         logger.info(f"{telegram_user.name} (Telegram ID: {telegram_user.id}) history successfully summarized.")
 
@@ -103,7 +103,7 @@ async def handle_reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     telegram_user = get_telegram_user(update=update)
     logger.info(f"{telegram_user.name} (Telegram ID: {telegram_user.id}) conversation history reset.")
 
-    await reset_chat_history(user_id=telegram_user.id)
+    await reset_chat_history(chat_id=telegram_chat.id)
     await context.bot.send_message(chat_id=telegram_chat.id, text="Done!")
 
 

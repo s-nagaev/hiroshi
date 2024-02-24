@@ -3,7 +3,7 @@ from functools import wraps
 from typing import Any, Callable
 
 from hiroshi.config import application_settings
-from hiroshi.storage.abc import Database
+from hiroshi.storage.abstract import Database
 from hiroshi.storage.local import LocalStorage
 
 if application_settings.redis:
@@ -22,7 +22,7 @@ class DatabaseCache:
 
             if application_settings.redis:
                 self._cache = await RedisStorage.create(
-                    connection_string=application_settings.redis, password=application_settings.redis_password
+                    url=application_settings.redis, password=application_settings.redis_password
                 )
             else:
                 self._cache = LocalStorage(application_settings.local_data_path)
