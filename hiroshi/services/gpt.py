@@ -1,6 +1,6 @@
 import g4f
-from g4f.base_provider import BaseProvider
 from g4f.models import Model
+from g4f.providers.types import BaseProvider
 from loguru import logger
 
 from hiroshi.config import gpt_settings

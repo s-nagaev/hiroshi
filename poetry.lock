@@ -129,13 +129,13 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "anyio"
-version = "4.2.0"
+version = "4.3.0"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "anyio-4.2.0-py3-none-any.whl", hash = "sha256:745843b39e829e108e518c489b31dc757de7d2131d53fac32bd8df268227bfee"},
-    {file = "anyio-4.2.0.tar.gz", hash = "sha256:e1875bb4b4e2de1669f4bc7869b6d3f54231cdced71605e6e64c9be77e3be50f"},
+    {file = "anyio-4.3.0-py3-none-any.whl", hash = "sha256:048e05d0f6caeed70d731f3db756d35dcc1f35747c8c403364a8332c630441b8"},
+    {file = "anyio-4.3.0.tar.gz", hash = "sha256:f75253795a87df48568485fd18cdd2a3fa5c4f7c5be8e5e36637733fce06fed6"},
 ]
 
 [package.dependencies]
@@ -542,13 +542,13 @@ files = [
 
 [[package]]
 name = "g4f"
-version = "0.2.1.0"
+version = "0.2.1.9"
 description = "The official gpt4free repository | various collection of powerful language models"
 optional = false
 python-versions = "*"
 files = [
-    {file = "g4f-0.2.1.0-py3-none-any.whl", hash = "sha256:aabc0ddb38c30249eb37142339d12ef4b18f150d5383ab3c87f461f522354fbf"},
-    {file = "g4f-0.2.1.0.tar.gz", hash = "sha256:7f7f78053a168c8a1ad7bf8f3ccef1898b19c931a6c49d58440857d97ddb228c"},
+    {file = "g4f-0.2.1.9-py3-none-any.whl", hash = "sha256:daaaec764ae2ac41af15035c75a57c89d2b520f1b5e215af035b31e6f66b39e0"},
+    {file = "g4f-0.2.1.9.tar.gz", hash = "sha256:1ac944fb7b94402ae754b6161c9e6a9a6ac17c32d50543ad32e4d2df2c16c3e8"},
 ]
 
 [package.dependencies]
@@ -556,9 +556,9 @@ aiohttp = "*"
 requests = "*"
 
 [package.extras]
-all = ["PyExecJS", "aiohttp-socks", "async-property", "beautifulsoup4", "brotli", "browser-cookie3", "cairosvg", "certifi", "curl-cffi (>=0.5.10)", "duckduckgo-search", "fastapi", "flask", "loguru", "nest-asyncio", "pillow", "platformdirs", "py-arkose-generator", "setuptools", "undetected-chromedriver", "uvicorn", "werkzeug"]
+all = ["PyExecJS", "aiohttp-socks", "async-property", "beautifulsoup4", "brotli", "browser-cookie3", "cairosvg", "certifi", "curl-cffi (>=0.6.0b9)", "duckduckgo-search (>=4.4.3)", "fastapi", "flask", "loguru", "nest-asyncio", "pillow", "platformdirs", "py-arkose-generator", "setuptools", "undetected-chromedriver (>=3.5.5)", "uvicorn", "werkzeug"]
 api = ["fastapi", "loguru", "nest-asyncio", "uvicorn"]
-gui = ["beautifulsoup4", "browser-cookie3", "duckduckgo-search", "flask", "pillow", "werkzeug"]
+gui = ["beautifulsoup4", "browser-cookie3", "duckduckgo-search (>=4.4.3)", "flask", "pillow", "werkzeug"]
 image = ["beautifulsoup4", "cairosvg", "pillow"]
 openai = ["async-property", "brotli", "py-arkose-generator"]
 webdriver = ["platformdirs", "setuptools", "undetected-chromedriver"]
@@ -576,13 +576,13 @@ files = [
 
 [[package]]
 name = "httpcore"
-version = "1.0.2"
+version = "1.0.4"
 description = "A minimal low-level HTTP client."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "httpcore-1.0.2-py3-none-any.whl", hash = "sha256:096cc05bca73b8e459a1fc3dcf585148f63e534eae4339559c9b8a8d6399acc7"},
-    {file = "httpcore-1.0.2.tar.gz", hash = "sha256:9fc092e4799b26174648e54b74ed5f683132a464e95643b226e00c2ed2fa6535"},
+    {file = "httpcore-1.0.4-py3-none-any.whl", hash = "sha256:ac418c1db41bade2ad53ae2f3834a3a0f5ae76b56cf5aa497d2d033384fc7d73"},
+    {file = "httpcore-1.0.4.tar.gz", hash = "sha256:cb2839ccfcba0d2d3c1131d3c3e26dfc327326fbe7a5dc0dbfe9f6c9151bb022"},
 ]
 
 [package.dependencies]
@@ -593,17 +593,17 @@ h11 = ">=0.13,<0.15"
 asyncio = ["anyio (>=4.0,<5.0)"]
 http2 = ["h2 (>=3,<5)"]
 socks = ["socksio (==1.*)"]
-trio = ["trio (>=0.22.0,<0.23.0)"]
+trio = ["trio (>=0.22.0,<0.25.0)"]
 
 [[package]]
 name = "httpx"
-version = "0.25.2"
+version = "0.26.0"
 description = "The next generation HTTP client."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "httpx-0.25.2-py3-none-any.whl", hash = "sha256:a05d3d052d9b2dfce0e3896636467f8a5342fb2b902c819428e1ac65413ca118"},
-    {file = "httpx-0.25.2.tar.gz", hash = "sha256:8b8fcaa0c8ea7b05edd69a094e63a2094c4efcb48129fb757361bc423c0ad9e8"},
+    {file = "httpx-0.26.0-py3-none-any.whl", hash = "sha256:8915f5a3627c4d47b73e8202457cb28f1266982d1159bd5779d86a80c0eab1cd"},
+    {file = "httpx-0.26.0.tar.gz", hash = "sha256:451b55c30d5185ea6b23c2c793abf9bb237d2a7dfb901ced6ff69ad37ec1dfaf"},
 ]
 
 [package.dependencies]
@@ -957,28 +957,28 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "python-telegram-bot"
-version = "20.7"
+version = "20.8"
 description = "We have made you a wrapper you can't refuse"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "python-telegram-bot-20.7.tar.gz", hash = "sha256:4f146c39de5f5e0b3723c2abedaf78046ebd30a6a49d2281ee4b3af5eb116b68"},
-    {file = "python_telegram_bot-20.7-py3-none-any.whl", hash = "sha256:462326c65671c8c39e76c8c96756ee918be6797d225f8db84d2ec0f883383b8c"},
+    {file = "python-telegram-bot-20.8.tar.gz", hash = "sha256:0e1e4a6dbce3f4ba606990d66467a5a2d2018368fe44756fae07410a74e960dc"},
+    {file = "python_telegram_bot-20.8-py3-none-any.whl", hash = "sha256:a98ddf2f237d6584b03a2f8b20553e1b5e02c8d3a1ea8e17fd06cc955af78c14"},
 ]
 
 [package.dependencies]
-httpx = ">=0.25.2,<0.26.0"
+httpx = ">=0.26.0,<0.27.0"
 
 [package.extras]
-all = ["APScheduler (>=3.10.4,<3.11.0)", "aiolimiter (>=1.1.0,<1.2.0)", "cachetools (>=5.3.2,<5.4.0)", "cryptography (>=39.0.1)", "httpx[http2]", "httpx[socks]", "pytz (>=2018.6)", "tornado (>=6.3.3,<6.4.0)"]
+all = ["APScheduler (>=3.10.4,<3.11.0)", "aiolimiter (>=1.1.0,<1.2.0)", "cachetools (>=5.3.2,<5.4.0)", "cryptography (>=39.0.1)", "httpx[http2]", "httpx[socks]", "pytz (>=2018.6)", "tornado (>=6.4,<7.0)"]
 callback-data = ["cachetools (>=5.3.2,<5.4.0)"]
-ext = ["APScheduler (>=3.10.4,<3.11.0)", "aiolimiter (>=1.1.0,<1.2.0)", "cachetools (>=5.3.2,<5.4.0)", "pytz (>=2018.6)", "tornado (>=6.3.3,<6.4.0)"]
+ext = ["APScheduler (>=3.10.4,<3.11.0)", "aiolimiter (>=1.1.0,<1.2.0)", "cachetools (>=5.3.2,<5.4.0)", "pytz (>=2018.6)", "tornado (>=6.4,<7.0)"]
 http2 = ["httpx[http2]"]
 job-queue = ["APScheduler (>=3.10.4,<3.11.0)", "pytz (>=2018.6)"]
 passport = ["cryptography (>=39.0.1)"]
 rate-limiter = ["aiolimiter (>=1.1.0,<1.2.0)"]
 socks = ["httpx[socks]"]
-webhooks = ["tornado (>=6.3.3,<6.4.0)"]
+webhooks = ["tornado (>=6.4,<7.0)"]
 
 [[package]]
 name = "requests"
@@ -1025,13 +1025,13 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "2.2.0"
+version = "2.2.1"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "urllib3-2.2.0-py3-none-any.whl", hash = "sha256:ce3711610ddce217e6d113a2732fafad960a03fd0318c91faa79481e35c11224"},
-    {file = "urllib3-2.2.0.tar.gz", hash = "sha256:051d961ad0c62a94e50ecf1af379c3aba230c66c710493493560c0c223c49f20"},
+    {file = "urllib3-2.2.1-py3-none-any.whl", hash = "sha256:450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d"},
+    {file = "urllib3-2.2.1.tar.gz", hash = "sha256:d0570876c61ab9e520d776c38acbbb5b05a776d3f9ff98a5c8fd5162a444cf19"},
 ]
 
 [package.extras]

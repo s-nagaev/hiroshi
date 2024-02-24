@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hiroshi"
-version = "0.1.1"
+version = "0.1.3"
 description = "Just a GPT4Free-based ChatGPT Telegram bot"
 authors = ["Sergei Nagaev <nagaev.sv@gmail.com>"]
 license = "MIT"
