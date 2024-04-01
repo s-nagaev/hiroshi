@@ -18,7 +18,7 @@ from telegram.ext import (
     filters,
 )
 
-from hiroshi.config import telegram_settings, application_settings
+from hiroshi.config import application_settings, telegram_settings
 from hiroshi.services.bot import (
     handle_available_providers_options,
     handle_prompt,
