@@ -1,5 +1,6 @@
 import asyncio
 
+import requests
 from loguru import logger
 from telegram import (
     BotCommand,
@@ -17,7 +18,7 @@ from telegram.ext import (
     filters,
 )
 
-from hiroshi.config import telegram_settings
+from hiroshi.config import telegram_settings, application_settings
 from hiroshi.services.bot import (
     handle_available_providers_options,
     handle_prompt,
@@ -166,7 +167,23 @@ class HiroshiBot:
         app.run_polling()
 
 
+async def uptime_checker() -> None:
+    if application_settings.monitoring_is_active and application_settings.monitoring_url:
+        logger.info(f'Uptime Checker started. '
+                    f'MONITORING_FREQUENCY_CALL={application_settings.monitoring_frequency_call} '
+                    f'MONITORING_URL={application_settings.monitoring_url}')
+        while True:
+            result = await asyncio.to_thread(requests.get, application_settings.monitoring_url)
+            if result.status_code != 200:
+                logger.error(f'Uptime Checker failed. status_code({result.status_code}) msg: {result.text}')
+            # Converting from minutes to seconds.
+            await asyncio.sleep(application_settings.monitoring_frequency_call * 60)
+    else:
+        logger.info('Uptime Checker disabled. To turn it on set MONITORING_IS_ACTIVE environment variable.')
+
+
 if __name__ == "__main__":
     log_application_settings()
     telegram_bot = HiroshiBot()
     telegram_bot.run()
+    asyncio.run(uptime_checker())

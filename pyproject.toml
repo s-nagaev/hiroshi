@@ -14,6 +14,7 @@ loguru = "^0.7"
 pydantic = {extras = ["dotenv"], version = "1.10.9"}
 python-telegram-bot = "^20"
 redis = {extras = ["hiredis"], version = "5.0.1"}
+types-requests = "^2.31.0.20240311"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
