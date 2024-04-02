@@ -1,6 +1,6 @@
 import asyncio
 
-import requests
+import httpx
 from loguru import logger
 from telegram import (
     BotCommand,
@@ -173,7 +173,8 @@ async def uptime_checker() -> None:
                     f'MONITORING_FREQUENCY_CALL={application_settings.monitoring_frequency_call} '
                     f'MONITORING_URL={application_settings.monitoring_url}')
         while True:
-            result = await asyncio.to_thread(requests.get, application_settings.monitoring_url)
+            async with httpx.AsyncClient() as client:
+                result = await client.get(application_settings.monitoring_url)
             if result.status_code != 200:
                 logger.error(f'Uptime Checker failed. status_code({result.status_code}) msg: {result.text}')
             # Converting from minutes to seconds.
