@@ -10,7 +10,10 @@ class ApplicationSettings(BaseSettings):
     log_prompt_data: bool = Field(env="LOG_PROMPT_DATA", default=False)
     monitoring_is_active: bool = Field(env="MONITORING_IS_ACTIVE", default=False)
     monitoring_url: str | None = Field(env="MONITORING_URL", default=None)
-    monitoring_frequency_call: int = Field(env="MONITORING_FREQUENCY_CALL", default=5)
+    monitoring_frequency_call: int = Field(env="MONITORING_FREQUENCY_CALL", default=300)
+    monitoring_retry_policy: bool = Field(env="MONITORING_RETRY_POLICY", default=False)
+    monitoring_retry_calls: int = Field(env="MONITORING_RETRY_CALLS", default=3)
+    monitoring_proxy: str | None = Field(env="MONITORING_PROXY", default=None)
 
     class Config:
         env_file = ".env"

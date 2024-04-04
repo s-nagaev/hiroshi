@@ -163,6 +163,8 @@ class HiroshiBot:
         #     )
         # )
         app.add_error_handler(self.error_handler)
+        uptime_checker(application=app)
+
         app.run_polling()
 
 
@@ -170,4 +172,3 @@ if __name__ == "__main__":
     log_application_settings()
     telegram_bot = HiroshiBot()
     telegram_bot.run()
-    asyncio.run(uptime_checker())

@@ -1,4 +1,3 @@
-import asyncio
 import io
 from functools import wraps
 from typing import Any, Callable
@@ -251,17 +250,39 @@ def log_application_settings() -> None:
         )
 
 
-async def uptime_checker() -> None:
-    if application_settings.monitoring_is_active and application_settings.monitoring_url:
-        logger.info(f'Uptime Checker started. '
-                    f'MONITORING_FREQUENCY_CALL={application_settings.monitoring_frequency_call} '
-                    f'MONITORING_URL={application_settings.monitoring_url}')
-        while True:
-            async with httpx.AsyncClient() as client:
-                result = await client.get(application_settings.monitoring_url)
-            if result.status_code != 200:
-                logger.error(f'Uptime Checker failed. status_code({result.status_code}) msg: {result.text}')
-            # Converting from minutes to seconds.
-            await asyncio.sleep(application_settings.monitoring_frequency_call * 60)
-    else:
+async def uptime_checker_job(context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not (application_settings.monitoring_is_active and application_settings.monitoring_url):
+        return
+
+    transport = None
+
+    if application_settings.monitoring_retry_policy:
+        transport = httpx.AsyncHTTPTransport(retries=application_settings.monitoring_retry_calls,
+                                             proxy=application_settings.monitoring_proxy)
+
+    async with httpx.AsyncClient(transport=transport, proxy=application_settings.monitoring_proxy) as client:
+        try:
+            result = await client.get(application_settings.monitoring_url)
+        except Exception as error:
+            logger.error(f'Uptime Checker failed with an Exception: {error}')
+            return
+        if result.is_error:
+            logger.error(f'Uptime Checker failed. status_code({result.status_code}) msg: {result.text}')
+
+
+def uptime_checker(application: Any) -> None:
+    if not (application_settings.monitoring_is_active and application_settings.monitoring_url):
         logger.info('Uptime Checker disabled. To turn it on set MONITORING_IS_ACTIVE environment variable.')
+        return
+
+    logger.info(f'Uptime Checker started. '
+                f'MONITORING_FREQUENCY_CALL={application_settings.monitoring_frequency_call} '
+                f'MONITORING_URL={application_settings.monitoring_url}')
+
+    if not application.job_queue:
+        logger.error('Application job queue was shut down or never started.')
+        return
+
+    application.job_queue.run_repeating(callback=uptime_checker_job,
+                                        interval=application_settings.monitoring_frequency_call,
+                                        first=0.0)

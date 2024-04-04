@@ -133,6 +133,35 @@ test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypo
 trio = ["trio (>=0.23)"]
 
 [[package]]
+name = "apscheduler"
+version = "3.10.4"
+description = "In-process task scheduler with Cron-like capabilities"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "APScheduler-3.10.4-py3-none-any.whl", hash = "sha256:fb91e8a768632a4756a585f79ec834e0e27aad5860bac7eaa523d9ccefd87661"},
+    {file = "APScheduler-3.10.4.tar.gz", hash = "sha256:e6df071b27d9be898e486bc7940a7be50b4af2e9da7c08f0744a96d4bd4cef4a"},
+]
+
+[package.dependencies]
+pytz = "*"
+six = ">=1.4.0"
+tzlocal = ">=2.0,<3.0.0 || >=4.0.0"
+
+[package.extras]
+doc = ["sphinx", "sphinx-rtd-theme"]
+gevent = ["gevent"]
+mongodb = ["pymongo (>=3.0)"]
+redis = ["redis (>=3.0)"]
+rethinkdb = ["rethinkdb (>=2.4.0)"]
+sqlalchemy = ["sqlalchemy (>=1.4)"]
+testing = ["pytest", "pytest-asyncio", "pytest-cov", "pytest-tornado5"]
+tornado = ["tornado (>=4.3)"]
+twisted = ["twisted"]
+zookeeper = ["kazoo"]
+
+[[package]]
 name = "async-timeout"
 version = "4.0.3"
 description = "Timeout context manager for asyncio programs"
@@ -724,14 +753,14 @@ trio = ["trio (>=0.22.0,<0.25.0)"]
 
 [[package]]
 name = "httpx"
-version = "0.26.0"
+version = "0.27.0"
 description = "The next generation HTTP client."
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "httpx-0.26.0-py3-none-any.whl", hash = "sha256:8915f5a3627c4d47b73e8202457cb28f1266982d1159bd5779d86a80c0eab1cd"},
-    {file = "httpx-0.26.0.tar.gz", hash = "sha256:451b55c30d5185ea6b23c2c793abf9bb237d2a7dfb901ced6ff69ad37ec1dfaf"},
+    {file = "httpx-0.27.0-py3-none-any.whl", hash = "sha256:71d5465162c13681bff01ad59b2cc68dd838ea1f10e51574bac27103f00c91a5"},
+    {file = "httpx-0.27.0.tar.gz", hash = "sha256:a0cb88a46f32dc874e04ee956e4c2764aba2aa228f650b06788ba6bda2962ab5"},
 ]
 
 [package.dependencies]
@@ -1099,29 +1128,43 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "python-telegram-bot"
-version = "20.8"
+version = "21.0.1"
 description = "We have made you a wrapper you can't refuse"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "python-telegram-bot-20.8.tar.gz", hash = "sha256:0e1e4a6dbce3f4ba606990d66467a5a2d2018368fe44756fae07410a74e960dc"},
-    {file = "python_telegram_bot-20.8-py3-none-any.whl", hash = "sha256:a98ddf2f237d6584b03a2f8b20553e1b5e02c8d3a1ea8e17fd06cc955af78c14"},
+    {file = "python-telegram-bot-21.0.1.tar.gz", hash = "sha256:3e005962c9fda01b09480044c49b3dd70870ee0c63340374bf3d5191e3910be9"},
+    {file = "python_telegram_bot-21.0.1-py3-none-any.whl", hash = "sha256:b282544d1a51bf228b868e2ce0285b8448982878e2362175836429722d6f8795"},
 ]
 
 [package.dependencies]
-httpx = ">=0.26.0,<0.27.0"
+APScheduler = {version = ">=3.10.4,<3.11.0", optional = true, markers = "extra == \"job-queue\""}
+httpx = ">=0.27,<1.0"
+pytz = {version = ">=2018.6", optional = true, markers = "extra == \"job-queue\""}
 
 [package.extras]
-all = ["APScheduler (>=3.10.4,<3.11.0)", "aiolimiter (>=1.1.0,<1.2.0)", "cachetools (>=5.3.2,<5.4.0)", "cryptography (>=39.0.1)", "httpx[http2]", "httpx[socks]", "pytz (>=2018.6)", "tornado (>=6.4,<7.0)"]
-callback-data = ["cachetools (>=5.3.2,<5.4.0)"]
-ext = ["APScheduler (>=3.10.4,<3.11.0)", "aiolimiter (>=1.1.0,<1.2.0)", "cachetools (>=5.3.2,<5.4.0)", "pytz (>=2018.6)", "tornado (>=6.4,<7.0)"]
+all = ["APScheduler (>=3.10.4,<3.11.0)", "aiolimiter (>=1.1.0,<1.2.0)", "cachetools (>=5.3.3,<5.4.0)", "cryptography (>=39.0.1)", "httpx[http2]", "httpx[socks]", "pytz (>=2018.6)", "tornado (>=6.4,<7.0)"]
+callback-data = ["cachetools (>=5.3.3,<5.4.0)"]
+ext = ["APScheduler (>=3.10.4,<3.11.0)", "aiolimiter (>=1.1.0,<1.2.0)", "cachetools (>=5.3.3,<5.4.0)", "pytz (>=2018.6)", "tornado (>=6.4,<7.0)"]
 http2 = ["httpx[http2]"]
 job-queue = ["APScheduler (>=3.10.4,<3.11.0)", "pytz (>=2018.6)"]
 passport = ["cryptography (>=39.0.1)"]
 rate-limiter = ["aiolimiter (>=1.1.0,<1.2.0)"]
 socks = ["httpx[socks]"]
 webhooks = ["tornado (>=6.4,<7.0)"]
+
+[[package]]
+name = "pytz"
+version = "2024.1"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pytz-2024.1-py2.py3-none-any.whl", hash = "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"},
+    {file = "pytz-2024.1.tar.gz", hash = "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812"},
+]
 
 [[package]]
 name = "redis"
@@ -1166,6 +1209,18 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+files = [
+    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+
+[[package]]
 name = "sniffio"
 version = "1.3.0"
 description = "Sniff out which async library your code is running under"
@@ -1203,6 +1258,36 @@ files = [
     {file = "typing_extensions-4.9.0-py3-none-any.whl", hash = "sha256:af72aea155e91adfc61c3ae9e0e342dbc0cba726d6cba4b6c72c1f34e47291cd"},
     {file = "typing_extensions-4.9.0.tar.gz", hash = "sha256:23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783"},
 ]
+
+[[package]]
+name = "tzdata"
+version = "2024.1"
+description = "Provider of IANA time zone data"
+category = "main"
+optional = false
+python-versions = ">=2"
+files = [
+    {file = "tzdata-2024.1-py2.py3-none-any.whl", hash = "sha256:9068bc196136463f5245e51efda838afa15aaeca9903f49050dfa2679db4d252"},
+    {file = "tzdata-2024.1.tar.gz", hash = "sha256:2674120f8d891909751c38abcdfd386ac0a5a1127954fbc332af6b5ceae07efd"},
+]
+
+[[package]]
+name = "tzlocal"
+version = "5.2"
+description = "tzinfo object for the local timezone"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "tzlocal-5.2-py3-none-any.whl", hash = "sha256:49816ef2fe65ea8ac19d19aa7a1ae0551c834303d5014c6d5a62e4cbda8047b8"},
+    {file = "tzlocal-5.2.tar.gz", hash = "sha256:8d399205578f1a9342816409cc1e46a93ebd5755e39ea2d85334bea911bf0e6e"},
+]
+
+[package.dependencies]
+tzdata = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+devenv = ["check-manifest", "pytest (>=4.3)", "pytest-cov", "pytest-mock (>=3.3)", "zest.releaser"]
 
 [[package]]
 name = "urllib3"
@@ -1344,4 +1429,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "cc6af0a777aa9b5821798ea1deb5d339195a8bb3894df6d6fedb06b782f9cbdf"
+content-hash = "8e07065d1029c9180182fe5e8fad4008cbc0ef3882e24278ce9773a74985f65f"
