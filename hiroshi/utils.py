@@ -249,16 +249,20 @@ def log_application_settings() -> None:
             "`redis://:password@localhost:6379/0`"
         )
 
+    if not application_settings.monitoring_url:
+        logger.info('Uptime Checker disabled. To turn it on set MONITORING_IS_ACTIVE environment variable.')
+    else:
+        logger.info(f'Uptime Checker started. '
+                    f'MONITORING_FREQUENCY_CALL={application_settings.monitoring_frequency_call} '
+                    f'MONITORING_URL={application_settings.monitoring_url}')
 
-async def uptime_checker_job(context: ContextTypes.DEFAULT_TYPE) -> None:
-    if not (application_settings.monitoring_is_active and application_settings.monitoring_url):
+
+async def run_monitoring(context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not application_settings.monitoring_url:
         return
 
-    transport = None
-
-    if application_settings.monitoring_retry_policy:
-        transport = httpx.AsyncHTTPTransport(retries=application_settings.monitoring_retry_calls,
-                                             proxy=application_settings.monitoring_proxy)
+    transport = httpx.AsyncHTTPTransport(retries=application_settings.monitoring_retry_calls,
+                                         proxy=application_settings.monitoring_proxy)
 
     async with httpx.AsyncClient(transport=transport, proxy=application_settings.monitoring_proxy) as client:
         try:
@@ -268,21 +272,3 @@ async def uptime_checker_job(context: ContextTypes.DEFAULT_TYPE) -> None:
             return
         if result.is_error:
             logger.error(f'Uptime Checker failed. status_code({result.status_code}) msg: {result.text}')
-
-
-def uptime_checker(application: Any) -> None:
-    if not (application_settings.monitoring_is_active and application_settings.monitoring_url):
-        logger.info('Uptime Checker disabled. To turn it on set MONITORING_IS_ACTIVE environment variable.')
-        return
-
-    logger.info(f'Uptime Checker started. '
-                f'MONITORING_FREQUENCY_CALL={application_settings.monitoring_frequency_call} '
-                f'MONITORING_URL={application_settings.monitoring_url}')
-
-    if not application.job_queue:
-        logger.error('Application job queue was shut down or never started.')
-        return
-
-    application.job_queue.run_repeating(callback=uptime_checker_job,
-                                        interval=application_settings.monitoring_frequency_call,
-                                        first=0.0)
