@@ -15,6 +15,7 @@ from hiroshi.services.gpt import retrieve_available_providers
 from hiroshi.storage.abstract import Database
 from hiroshi.storage.database import inject_database
 from hiroshi.utils import (
+    get_prompt_with_replied_message,
     get_telegram_chat,
     get_telegram_message,
     get_telegram_user,
@@ -60,6 +61,9 @@ async def handle_prompt(db: Database, update: Update, context: ContextTypes.DEFA
         f"{telegram_chat.type.upper()} chat {telegram_chat.id}"
         f"{': ' + prompt_to_log if application_settings.log_prompt_data else ''}"
     )
+
+    # Get replied message concatenated to the prompt.
+    prompt = get_prompt_with_replied_message(update=update, prompt=prompt)
 
     get_gtp_chat_answer_task = asyncio.ensure_future(get_gtp_chat_answer(chat_id=telegram_chat.id, prompt=prompt))
 

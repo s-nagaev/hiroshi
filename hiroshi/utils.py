@@ -35,6 +35,17 @@ def get_telegram_message(update: Update) -> TelegramMessage:
     raise ValueError(f"Telegram incoming update does not contain valid message data. Update ID: {update.update_id}")
 
 
+def get_prompt_with_replied_message(update: Update, prompt: str) -> str:
+    user = get_telegram_user(update)
+
+    if update.message and update.message.reply_to_message:
+        prompt = (f'<<{update.message.reply_to_message.caption or update.message.reply_to_message.text}.>> '
+                  f'{user.username} answered: {prompt}')
+        if update.message.reply_to_message.from_user:
+            prompt = f' {update.message.reply_to_message.from_user.username} said: ' + prompt
+    return prompt
+
+
 async def send_message(
     update: Update, context: ContextTypes.DEFAULT_TYPE, reply: bool = True, **kwargs: Any
 ) -> TelegramMessage:
