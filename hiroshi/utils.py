@@ -2,6 +2,7 @@ import io
 from functools import wraps
 from typing import Any, Callable
 
+import httpx
 from loguru import logger
 from telegram import Chat as TelegramChat
 from telegram import Message as TelegramMessage
@@ -247,3 +248,27 @@ def log_application_settings() -> None:
             "`REDIS_PASSWORD` environment variable is <red>deprecated</red>. Use `REDIS` instead, i.e. "
             "`redis://:password@localhost:6379/0`"
         )
+
+    if not application_settings.monitoring_url:
+        logger.info('Uptime Checker disabled. To turn it on set MONITORING_IS_ACTIVE environment variable.')
+    else:
+        logger.info(f'Uptime Checker started. '
+                    f'MONITORING_FREQUENCY_CALL={application_settings.monitoring_frequency_call} '
+                    f'MONITORING_URL={application_settings.monitoring_url}')
+
+
+async def run_monitoring(context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not application_settings.monitoring_url:
+        return
+
+    transport = httpx.AsyncHTTPTransport(retries=application_settings.monitoring_retry_calls,
+                                         proxy=application_settings.monitoring_proxy)
+
+    async with httpx.AsyncClient(transport=transport, proxy=application_settings.monitoring_proxy) as client:
+        try:
+            result = await client.get(application_settings.monitoring_url)
+        except Exception as error:
+            logger.error(f'Uptime Checker failed with an Exception: {error}')
+            return
+        if result.is_error:
+            logger.error(f'Uptime Checker failed. status_code({result.status_code}) msg: {result.text}')

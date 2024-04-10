@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2024-04-01
+
+### Added:
+- Functionality for periodically report application operational status to the monitoring system by invoking a specific 
+webhook.
+
 ## [0.2.0] - 2024-02-25
 
 ### Added:
