@@ -229,6 +229,13 @@ def handle_gpt_exceptions(func: Callable[..., Any]) -> Callable[..., Any]:
 def log_application_settings() -> None:
     storage = "<red>REDIS</red>" if application_settings.redis else "<blue>LOCAL</blue>"
 
+    logger_info = "<red>DISABLED</red>."
+
+    if application_settings.monitoring_url:
+        logger_info = (f"<blue>ACTIVE</blue>."
+                       f"MONITORING_FREQUENCY_CALL=<blue>{application_settings.monitoring_frequency_call}</blue>."
+                       f"MONITORING_URL=<blue>{application_settings.monitoring_url}</blue>")
+
     messages = (
         f"Application is initialized using {storage} storage.",
         f"Bot name is <blue>{telegram_settings.bot_name}</blue>",
@@ -239,6 +246,7 @@ def log_application_settings() -> None:
         f"Users whitelist: <blue>{telegram_settings.users_whitelist or 'UNSET'}</blue>",
         f"Groups whitelist: <blue>{telegram_settings.groups_whitelist or 'UNSET'}</blue>",
         f"Groups admins: <blue>{telegram_settings.group_admins or 'UNSET'}</blue>",
+        f"Uptime checker: {logger_info}"
     )
     for message in messages:
         logger.opt(colors=True).info(message)
@@ -248,13 +256,6 @@ def log_application_settings() -> None:
             "`REDIS_PASSWORD` environment variable is <red>deprecated</red>. Use `REDIS` instead, i.e. "
             "`redis://:password@localhost:6379/0`"
         )
-
-    if not application_settings.monitoring_url:
-        logger.info('Uptime Checker disabled. To turn it on set MONITORING_IS_ACTIVE environment variable.')
-    else:
-        logger.info(f'Uptime Checker started. '
-                    f'MONITORING_FREQUENCY_CALL={application_settings.monitoring_frequency_call} '
-                    f'MONITORING_URL={application_settings.monitoring_url}')
 
 
 async def run_monitoring(context: ContextTypes.DEFAULT_TYPE) -> None:
