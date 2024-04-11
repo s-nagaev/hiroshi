@@ -246,7 +246,7 @@ def log_application_settings() -> None:
         f"Users whitelist: <blue>{telegram_settings.users_whitelist or 'UNSET'}</blue>",
         f"Groups whitelist: <blue>{telegram_settings.groups_whitelist or 'UNSET'}</blue>",
         f"Groups admins: <blue>{telegram_settings.group_admins or 'UNSET'}</blue>",
-        f"Uptime checker: {logger_info}"
+        f"Uptime checker: {logger_info}",
     )
     for message in messages:
         logger.opt(colors=True).info(message)
