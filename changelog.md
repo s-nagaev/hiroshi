@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] - 2024-04-17
+
+### Changed
+
+- Reply message logic: prompt construction logic is fixed.
+- Now, the provider list contains only providers explicitly marked as `working`
+
+
 ## [0.2.2] - 2024-04-16
 
 ### Changed

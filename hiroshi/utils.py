@@ -3,6 +3,7 @@ from functools import wraps
 from typing import Any, Callable
 
 import httpx
+from g4f.Provider import ProviderUtils
 from loguru import logger
 from telegram import Chat as TelegramChat
 from telegram import Message as TelegramMessage
@@ -36,14 +37,19 @@ def get_telegram_message(update: Update) -> TelegramMessage:
     raise ValueError(f"Telegram incoming update does not contain valid message data. Update ID: {update.update_id}")
 
 
-def get_prompt_with_replied_message(update: Update, prompt: str) -> str:
-    user = get_telegram_user(update)
+def get_prompt_with_replied_message(update: Update, initial_prompt: str) -> str:
+    if not update.message or not update.message.reply_to_message:
+        return initial_prompt
 
-    if update.message and update.message.reply_to_message:
-        prompt = (f'<<{update.message.reply_to_message.caption or update.message.reply_to_message.text}.>> '
-                  f'{user.username} answered: {prompt}')
-        if update.message.reply_to_message.from_user:
-            prompt = f' {update.message.reply_to_message.from_user.username} said: ' + prompt
+    user = get_telegram_user(update)
+    if quoted_user := update.message.reply_to_message.from_user:
+        quoted_user_name = quoted_user.name
+    else:
+        quoted_user_name = "user"
+
+    quoted_message = update.message.reply_to_message.caption or update.message.reply_to_message.text
+    prompt = f"> {quoted_message}\n>\n>  — *{quoted_user_name}*\n\n" f"{user.username}: {initial_prompt}"
+
     return prompt
 
 
@@ -243,9 +249,11 @@ def log_application_settings() -> None:
     logger_info = "<red>DISABLED</red>."
 
     if application_settings.monitoring_url:
-        logger_info = (f"<blue>ACTIVE</blue>."
-                       f"MONITORING_FREQUENCY_CALL=<blue>{application_settings.monitoring_frequency_call}</blue>."
-                       f"MONITORING_URL=<blue>{application_settings.monitoring_url}</blue>")
+        logger_info = (
+            f"<blue>ACTIVE</blue>."
+            f"MONITORING_FREQUENCY_CALL=<blue>{application_settings.monitoring_frequency_call}</blue>."
+            f"MONITORING_URL=<blue>{application_settings.monitoring_url}</blue>"
+        )
 
     messages = (
         f"Application is initialized using {storage} storage.",
@@ -273,14 +281,22 @@ async def run_monitoring(context: ContextTypes.DEFAULT_TYPE) -> None:
     if not application_settings.monitoring_url:
         return
 
-    transport = httpx.AsyncHTTPTransport(retries=application_settings.monitoring_retry_calls,
-                                         proxy=application_settings.monitoring_proxy)
+    transport = httpx.AsyncHTTPTransport(
+        retries=application_settings.monitoring_retry_calls, proxy=application_settings.monitoring_proxy
+    )
 
     async with httpx.AsyncClient(transport=transport, proxy=application_settings.monitoring_proxy) as client:
         try:
             result = await client.get(application_settings.monitoring_url)
         except Exception as error:
-            logger.error(f'Uptime Checker failed with an Exception: {error}')
+            logger.error(f"Uptime Checker failed with an Exception: {error}")
             return
         if result.is_error:
-            logger.error(f'Uptime Checker failed. status_code({result.status_code}) msg: {result.text}')
+            logger.error(f"Uptime Checker failed. status_code({result.status_code}) msg: {result.text}")
+
+
+def is_provider_active(model_and_provider_names: tuple[str, str]) -> bool:
+    _, provider_name = model_and_provider_names
+    if provider := ProviderUtils.convert.get(provider_name):
+        return bool(provider.working)
+    return False
