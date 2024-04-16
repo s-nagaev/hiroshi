@@ -2,6 +2,7 @@ import io
 from functools import wraps
 from typing import Any, Callable
 
+import httpx
 from loguru import logger
 from telegram import Chat as TelegramChat
 from telegram import Message as TelegramMessage
@@ -239,6 +240,13 @@ def handle_gpt_exceptions(func: Callable[..., Any]) -> Callable[..., Any]:
 def log_application_settings() -> None:
     storage = "<red>REDIS</red>" if application_settings.redis else "<blue>LOCAL</blue>"
 
+    logger_info = "<red>DISABLED</red>."
+
+    if application_settings.monitoring_url:
+        logger_info = (f"<blue>ACTIVE</blue>."
+                       f"MONITORING_FREQUENCY_CALL=<blue>{application_settings.monitoring_frequency_call}</blue>."
+                       f"MONITORING_URL=<blue>{application_settings.monitoring_url}</blue>")
+
     messages = (
         f"Application is initialized using {storage} storage.",
         f"Bot name is <blue>{telegram_settings.bot_name}</blue>",
@@ -249,6 +257,7 @@ def log_application_settings() -> None:
         f"Users whitelist: <blue>{telegram_settings.users_whitelist or 'UNSET'}</blue>",
         f"Groups whitelist: <blue>{telegram_settings.groups_whitelist or 'UNSET'}</blue>",
         f"Groups admins: <blue>{telegram_settings.group_admins or 'UNSET'}</blue>",
+        f"Uptime checker: {logger_info}",
     )
     for message in messages:
         logger.opt(colors=True).info(message)
@@ -258,3 +267,20 @@ def log_application_settings() -> None:
             "`REDIS_PASSWORD` environment variable is <red>deprecated</red>. Use `REDIS` instead, i.e. "
             "`redis://:password@localhost:6379/0`"
         )
+
+
+async def run_monitoring(context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not application_settings.monitoring_url:
+        return
+
+    transport = httpx.AsyncHTTPTransport(retries=application_settings.monitoring_retry_calls,
+                                         proxy=application_settings.monitoring_proxy)
+
+    async with httpx.AsyncClient(transport=transport, proxy=application_settings.monitoring_proxy) as client:
+        try:
+            result = await client.get(application_settings.monitoring_url)
+        except Exception as error:
+            logger.error(f'Uptime Checker failed with an Exception: {error}')
+            return
+        if result.is_error:
+            logger.error(f'Uptime Checker failed. status_code({result.status_code}) msg: {result.text}')

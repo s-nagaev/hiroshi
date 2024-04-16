@@ -17,7 +17,7 @@ from telegram.ext import (
     filters,
 )
 
-from hiroshi.config import telegram_settings
+from hiroshi.config import telegram_settings, application_settings
 from hiroshi.services.bot import (
     handle_available_providers_options,
     handle_prompt,
@@ -31,6 +31,7 @@ from hiroshi.utils import (
     get_telegram_chat,
     get_telegram_message,
     log_application_settings,
+    run_monitoring,
     user_interacts_with_bot,
 )
 
@@ -163,6 +164,13 @@ class HiroshiBot:
         #     )
         # )
         app.add_error_handler(self.error_handler)
+        if not app.job_queue:
+            logger.error('Application job queue was shut down or never started.')
+        else:
+            app.job_queue.run_repeating(callback=run_monitoring,
+                                        interval=application_settings.monitoring_frequency_call,
+                                        first=0.0)
+
         app.run_polling()
 
 
