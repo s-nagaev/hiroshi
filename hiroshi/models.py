@@ -26,7 +26,10 @@ class Chat(BaseModel):
         if not self.provider_name:
             return default_model.best_provider
         if active_provider := ProviderUtils.convert.get(self.provider_name):
-            return active_provider
+            if active_provider.working:
+                return active_provider
+            else:
+                return default_model.best_provider
         logger.error(f"Unsupported provider selected: {self.provider_name}. Replacing it with the default one.")
         return default_model.best_provider
 

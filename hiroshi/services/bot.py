@@ -55,15 +55,15 @@ async def handle_prompt(db: Database, update: Update, context: ContextTypes.DEFA
     if prompt.startswith("/ask"):
         prompt = prompt.replace("/ask", "", 1).strip()
 
+    # Get replied message concatenated to the prompt.
+    prompt = get_prompt_with_replied_message(update=update, initial_prompt=prompt)
+
     prompt_to_log = prompt.replace("\r", " ").replace("\n", " ")
     logger.info(
         f"{telegram_user.name} (Telegram ID: {telegram_user.id}) sent a new message in the "
         f"{telegram_chat.type.upper()} chat {telegram_chat.id}"
         f"{': ' + prompt_to_log if application_settings.log_prompt_data else ''}"
     )
-
-    # Get replied message concatenated to the prompt.
-    prompt = get_prompt_with_replied_message(update=update, prompt=prompt)
 
     get_gtp_chat_answer_task = asyncio.ensure_future(get_gtp_chat_answer(chat_id=telegram_chat.id, prompt=prompt))
 

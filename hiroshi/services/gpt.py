@@ -4,6 +4,7 @@ from g4f.providers.types import BaseProvider
 from loguru import logger
 
 from hiroshi.config import gpt_settings
+from hiroshi.utils import is_provider_active
 
 MODELS_AND_PROVIDERS: dict[str, tuple[str, str]] = {
     "Default": ("gpt_35_long", "Default"),
@@ -43,4 +44,8 @@ async def get_chat_response(
 
 
 def retrieve_available_providers() -> list[str]:
-    return list(MODELS_AND_PROVIDERS.keys())
+    return [
+        key
+        for key in MODELS_AND_PROVIDERS
+        if is_provider_active(MODELS_AND_PROVIDERS[key]) or "Default" in MODELS_AND_PROVIDERS[key]
+    ]
