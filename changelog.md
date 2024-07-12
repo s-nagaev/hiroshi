@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2024-07-12
+
+### Changed
+- The provider Llama 2 in the list of available providers replaced by Llama 3.
+
+### Fixed
+- Missing dependency (curl-cffi) required in new versions of gpt4free.
+- A bug causing the bot under heavy load to "forget" to respond.
+
+
+
 ## [0.2.3] - 2024-04-17
 
 ### Changed

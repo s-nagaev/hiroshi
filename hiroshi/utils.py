@@ -297,6 +297,8 @@ async def run_monitoring(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 def is_provider_active(model_and_provider_names: tuple[str, str]) -> bool:
     _, provider_name = model_and_provider_names
+    if provider_name == "Llama":
+        return True  # TODO: Temporary solution, because Llama is turned off accidentally on the gpt4free side
     if provider := ProviderUtils.convert.get(provider_name):
         return bool(provider.working)
     return False

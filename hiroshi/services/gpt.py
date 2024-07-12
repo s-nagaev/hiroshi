@@ -8,17 +8,16 @@ from hiroshi.utils import is_provider_active
 
 MODELS_AND_PROVIDERS: dict[str, tuple[str, str]] = {
     "Default": ("gpt_35_long", "Default"),
-    "GPT-3.5 (The best/fastest provider)": ("gpt_35_long", "Default"),
-    "GPT-4 (The best/fastest provider)": ("gpt_4", "Default"),
+    "GPT-3.5 (Fastest provider)": ("gpt_35_long", "Default"),
+    "GPT-4 (Fastest provider)": ("gpt_4", "Default"),
     "Bing (GPT-4)": ("gpt_4", "Bing"),
     "ChatBase (GPT-3.5)": ("gpt-3.5-turbo", "ChatBase"),
     "ChatgptAi (GPT-3.5)": ("gpt-3.5-turbo", "ChatgptAi"),
     "FreeGpt (GPT-3.5)": ("gpt-3.5-turbo", "FreeGpt"),
     "GptGo (GPT-3.5)": ("gpt-3.5-turbo", "GptGo"),
     "You (GPT-3.5)": ("gpt-3.5-turbo", "You"),
-    "Llama (Llama 2 7B)": ("meta/llama-2-7b-chat", "Llama2"),
-    "Llama (Llama 2 13B)": ("meta/llama-2-13b-chat", "Llama2"),
-    "Llama (Llama 2 70B)": ("meta/llama-2-70b-chat", "Llama2"),
+    "Llama (Llama 3 8B)": ("meta/meta-llama-3-8b-instruct", "Llama"),
+    "Llama (Llama 3 70B)": ("meta/meta-llama-3-70b-instruct", "Llama"),
 }
 
 
@@ -44,8 +43,4 @@ async def get_chat_response(
 
 
 def retrieve_available_providers() -> list[str]:
-    return [
-        key
-        for key in MODELS_AND_PROVIDERS
-        if is_provider_active(MODELS_AND_PROVIDERS[key]) or "Default" in MODELS_AND_PROVIDERS[key]
-    ]
+    return [key for key, value in MODELS_AND_PROVIDERS.items() if is_provider_active(value) or "Default" in value]

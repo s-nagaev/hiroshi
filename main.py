@@ -1,4 +1,6 @@
 import asyncio
+from asyncio import Task
+from typing import Any, Coroutine
 
 from loguru import logger
 from telegram import (
@@ -38,6 +40,7 @@ from hiroshi.utils import (
 
 class HiroshiBot:
     def __init__(self) -> None:
+        self.background_tasks: set[Task[Any]] = set()
         self.commands = [
             BotCommand(command="about", description="About this bot"),
             BotCommand(command="help", description="Show the help message"),
@@ -52,6 +55,11 @@ class HiroshiBot:
             ),
             BotCommand(command="provider", description="Select GPT provider"),
         ]
+
+    def create_task(self, task: Coroutine[Any, Any, Any]) -> None:
+        task_scheduled = asyncio.create_task(task)
+        self.background_tasks.add(task_scheduled)
+        task_scheduled.add_done_callback(self.background_tasks.discard)
 
     async def help(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         telegram_message = get_telegram_message(update=update)
@@ -75,7 +83,7 @@ class HiroshiBot:
     @check_user_allowance
     @check_user_allow_to_apply_settings
     async def reset(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        asyncio.create_task(handle_reset(update=update, context=context))
+        self.create_task(task=handle_reset(update=update, context=context))
 
     @check_user_allowance
     async def prompt(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -93,11 +101,11 @@ class HiroshiBot:
             and not user_interacts_with_bot(update=update, context=context)
         ):
             return None
-        asyncio.create_task(handle_prompt(update=update, context=context))
+        self.create_task(task=handle_prompt(update=update, context=context))
 
     @check_user_allowance
     async def ask(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        asyncio.create_task(handle_prompt(update=update, context=context))
+        self.create_task(task=handle_prompt(update=update, context=context))
 
     @check_user_allowance
     @check_user_allow_to_apply_settings
@@ -109,7 +117,7 @@ class HiroshiBot:
 
     @check_user_allow_to_apply_settings
     async def select_provider(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        asyncio.create_task(handle_provider_selection(update=update, context=context))
+        self.create_task(task=handle_provider_selection(update=update, context=context))
 
     @check_user_allowance
     async def inline_query(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -139,8 +147,8 @@ class HiroshiBot:
             app = (
                 ApplicationBuilder()
                 .token(telegram_settings.token)
-                .proxy_url(telegram_settings.proxy)
-                .get_updates_proxy_url(telegram_settings.proxy)
+                .proxy(telegram_settings.proxy)
+                .get_updates_proxy(telegram_settings.proxy)
                 .post_init(self.post_init)
                 .build()
             )

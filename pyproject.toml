@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hiroshi"
-version = "0.2.3"
+version = "0.3.0"
 description = "Just a GPT4Free-based ChatGPT Telegram bot"
 authors = ["Sergei Nagaev <nagaev.sv@gmail.com>"]
 license = "MIT"
@@ -12,8 +12,9 @@ brotli = "^1.1.0"
 g4f = "*"
 loguru = "^0.7"
 pydantic = {extras = ["dotenv"], version = "1.10.9"}
-python-telegram-bot = {extras = ["job-queue"], version = "^21.0.1"}
-redis = {extras = ["hiredis"], version = "5.0.1"}
+python-telegram-bot = {extras = ["job-queue", "socks"], version = "^21.0.1"}
+redis = {extras = ["hiredis"], version = "5.0.7"}
+curl-cffi = "^0.7.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
