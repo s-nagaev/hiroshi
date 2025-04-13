@@ -5,6 +5,35 @@
 [![docker image size](https://img.shields.io/docker/image-size/pysergio/hiroshi/latest)](https://hub.docker.com/r/pysergio/hiroshi/tags)
 ![license](https://img.shields.io/github/license/s-nagaev/hiroshi)
 
+## ⚠️ Project Archived ⚠️
+
+**Please note:** This project, **Hiroshi**, is no longer actively maintained and has been archived.
+
+### Reason for Archiving
+
+Hiroshi was initially created as a solution to access Large Language Models (LLMs) like GPT-3.5 and GPT-4 via Telegram during a time when official API access was often associated with significant costs. It utilized unofficial methods (based on `gpt4free`) to provide this access freely.
+
+However, the landscape surrounding LLM access has evolved considerably:
+
+1.  **Rise of Free Official API Tiers:** Many providers, including Google, Cloudflare, Moonshot, and others, now offer generous free tiers for their official LLM APIs. This significantly lowers the barrier to entry for legitimate, stable access.
+2.  **Reliability and Legitimacy:** Official APIs offer far greater reliability, stability, and performance compared to the unofficial methods Hiroshi relied upon. Using official channels is also the intended and more sustainable way to interact with these services.
+3.  **Focus Shift to a Successor Project:** Development efforts have shifted to a more modern and robust project, **[Chibi](https://github.com/s-nagaev/chibi)**.
+
+### Recommended Alternative: Chibi
+
+If you are looking for a Telegram bot to interact with various LLMs, I strongly recommend checking out **[Chibi](https://github.com/s-nagaev/chibi)**.
+
+*   **Official API Integration:** Chibi connects directly to official APIs from numerous providers.
+*   **Supports Free Tiers:** It fully supports providers offering free access, allowing you to leverage those benefits.
+*   **Actively Developed:** Chibi is under active development, receiving updates and new features.
+*   **Reliable & Stable:** Offers a much more dependable experience due to its use of official APIs.
+
+Essentially, **Chibi provides the same core goal as Hiroshi but achieves it through more reliable, legitimate, and sustainable means**, taking advantage of the current availability of free official APIs. Given these factors, maintaining Hiroshi is no longer practical or necessary.
+
+Thank you to everyone who showed interest in Hiroshi during its active time! Please consider migrating to [Chibi](https://github.com/s-nagaev/chibi) for ongoing development and support.
+
+---
+## Hiroshi
 
 Hiroshi is a [GPT4Free](https://github.com/xtekky/gpt4free)-based Telegram chatbot that offers 100% free access to 
 interact with GPT-3.5, GPT-4, and Llama2 language models, inclusive of Bing, You, AI Chat, and more. Users have the 
